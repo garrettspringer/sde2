@@ -25,7 +25,7 @@ let os3 = [-1.0; -1.0; 1.0; 1.0];;
 list-based input and weight representation and Eqn (1)*)
 
 let rec netUnit inputs weights =
-  if inputs == [] (* If the inputs or weights is empty, return an empty list *)
+  if inputs == [] || weights == [] (* If the inputs or weights is empty, return a 0 *)
   then 0.0
   else (* Else, pop & multiply inputs.hd and weights.hd and append that to a new list and recursively call netUnit *)
     (List.hd inputs *. List.hd weights) +. (netUnit (List.tl inputs) (List.tl weights));;
