@@ -12,6 +12,22 @@ let a = range 1 10;;
 open Printf
 let () = List.iter (printf "%d ") a*)
 
+open Printf
+(* This is used to print a list of list of floats *)
+(*let rec rowToString r =
+  match r with
+  | [] -> ""
+  | h :: [] -> string_of_float h
+  | h :: t -> string_of_float h ^ ";" ^ (rowToString t)
+
+let rec imageToString i =
+  match i with
+  | [] -> ""
+  | h :: t -> "[" ^ (rowToString h) ^ "];\n" ^ (imageToString t)
+
+let pp_my_image s =
+  print_string (imageToString s)*)
+
 (** some 4-D (4 unit) data for simulation/debugging *)
 let os1 = [1.0; -1.0; 1.0; -1.0];;
 let os2 = [-1.0; -1.0; 1.0; -1.0];;
@@ -40,4 +56,23 @@ print_string "\n";;
 
 let test3 = netUnit os1 [1.;2.;3.;1.];;
 print_float test3;;
+print_string "\n";;*)
+
+(* Returns net activation computation for entire network
+as a vector (list) of individual unit activations *)
+
+let rec netAll state weightMatrix =
+  if weightMatrix == [] (* If weight matrix is empty, return an empty list *)
+  then [] 
+  else (* Else, compute the state against the head weight matrix *)
+    (netUnit (state) (List.hd weightMatrix)) :: (netAll (state) (List.tl weightMatrix));;
+
+let w = [[0.; -1.; 1.; -1.]; [-1.; 0.; -1.; 1.]; [1.; -1.; 0.; -1.]; [-1.; 1.; -1.; 0.]];;
+
+(*let test1 = netAll os1 w;;
+let () = List.iter (printf "%f ") test1;;
+print_string "\n";;
+
+let test2 = netAll os2 w;;
+let () = List.iter (printf "%f ") test2;;
 print_string "\n";;*)
