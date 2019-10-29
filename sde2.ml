@@ -1,17 +1,3 @@
-(*let average a b =
-  print_string "Hello, World\n";
-  (a +. b) /. 2.0;;
-let i = average 10. 20.;;
-print_float i;;*)
-
-(*let rec range a b =
-    if a > b then []
-    else a :: range (a+1) b;; (* :: constructs a list with the left side being the head and right being the tail *)
-
-let a = range 1 10;;
-open Printf
-let () = List.iter (printf "%d ") a*)
-
 open Printf
 (* This is used to print a list of list of floats *)
 (*let rec rowToString r =
@@ -76,3 +62,26 @@ print_string "\n";;
 let test2 = netAll os2 w;;
 let () = List.iter (printf "%f ") test2;;
 print_string "\n";;*)
+
+(* Returns 'squashed' unit output. Implements Hopfield activation function
+corresponding to Eqn (3) for single (-1,1) unit *)
+
+let rec hop11Activation = function (net, oldo) ->
+  if net > 0.0     (* if net activation is negative, return -1 *) 
+  then 1.0
+  else 
+    if net < 0.0   (* if net activation is positive, return 1 *)
+    then -1.0
+    else oldo;;  (* if net activation is zero, return original value *)
+
+let test1 = hop11Activation(-3., 1.);;
+print_float test1;;
+print_string "\n";;
+
+let test2 = hop11Activation(3., 1.);;
+print_float test2;;
+print_string "\n";;
+                           
+let test3 = hop11Activation(0., 1.);;
+print_float test3;;
+print_string "\n";;
