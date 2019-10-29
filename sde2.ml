@@ -26,11 +26,11 @@ let os3 = [-1.0; -1.0; 1.0; 1.0];;
 (** Returns net activation for a single unit using our
 list-based input and weight representation and Eqn (1)*)
 
-let rec netUnit inputs weights =
+let rec netUnit = function (inputs, weights) ->
   if inputs == [] || weights == [] (* If the inputs or weights is empty, return a 0 *)
   then 0.0
   else (* Else, pop & multiply inputs.hd and weights.hd and append that to a new list and recursively call netUnit *)
-    (List.hd inputs *. List.hd weights) +. (netUnit (List.tl inputs) (List.tl weights));;
+    (List.hd inputs *. List.hd weights) +. (netUnit(List.tl inputs, List.tl weights));;
 
 (*let test1 = netUnit [-1.; -1.] [1.; 0.];;
 print_float test1;;
@@ -47,11 +47,11 @@ print_string "\n";;*)
 (* Returns net activation computation for entire network
 as a vector (list) of individual unit activations *)
 
-let rec netAll state weightMatrix =
+let rec netAll = function (state, weightMatrix) ->
   if weightMatrix == [] (* If weight matrix is empty, return an empty list *)
   then [] 
   else (* Else, compute the state against the head weight matrix *)
-    (netUnit (state) (List.hd weightMatrix)) :: (netAll (state) (List.tl weightMatrix));;
+    netUnit(state, List.hd weightMatrix) :: netAll(state, List.tl weightMatrix);;
 
 let w = [[0.; -1.; 1.; -1.]; [-1.; 0.; -1.; 1.]; [1.; -1.; 0.; -1.]; [-1.; 1.; -1.; 0.]];;
 
@@ -74,7 +74,7 @@ let rec hop11Activation = function (net, oldo) ->
     then -1.0
     else oldo;;  (* if net activation is zero, return original value *)
 
-let test1 = hop11Activation(-3., 1.);;
+(*let test1 = hop11Activation(-3., 1.);;
 print_float test1;;
 print_string "\n";;
 
@@ -84,4 +84,14 @@ print_string "\n";;
                            
 let test3 = hop11Activation(0., 1.);;
 print_float test3;;
+print_string "\n";;*)
+
+let rec nextState = function (currentState, weightMatrix) ->
+  if currentState == [] && weightMatrix == []
+  then []
+  else
+    hop11Activation(List.hd currentState, (List.hd(netAll(currentState, weightMatrix)))) :: nextState(List.tl currentState, List.tl weightMatrix);;
+
+let test1 = nextState(os1, w);;
+let () = List.iter (printf "%f ") test1;;
 print_string "\n";;
