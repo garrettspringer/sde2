@@ -1,6 +1,7 @@
 open Printf
+
 (* This is used to print a list of list of floats *)
-(*let rec rowToString r =
+let rec rowToString r =
   match r with
   | [] -> ""
   | h :: [] -> string_of_float h
@@ -12,12 +13,15 @@ let rec imageToString i =
   | h :: t -> "[" ^ (rowToString h) ^ "];\n" ^ (imageToString t)
 
 let pp_my_image s =
-  print_string (imageToString s)*)
+  print_string (imageToString s)
 
 (** some 4-D (4 unit) data for simulation/debugging *)
 let os1 = [1.0; -1.0; 1.0; -1.0];;
 let os2 = [-1.0; -1.0; 1.0; -1.0];;
 let os3 = [-1.0; -1.0; 1.0; 1.0];;
+
+let w = [[0.; -1.; 1.; -1.]; [-1.; 0.; -1.; 1.]; [1.; -1.; 0.; -1.]; [-1.; 1.; -1.; 0.]];;
+let w2 = [[0.; 1.; -1.; -1.]; [1.; 0.; -3.; 1.]; [-1.; -3.; 0.; -1.]; [-1.; 1.; -1.; 0.]];;
 
 (** show Eqns (4) and (5) in action *)
 
@@ -53,8 +57,6 @@ let rec netAll = function (state, weightMatrix) ->
   else (* Else, compute the state against the head weight matrix *)
     netUnit(state, List.hd weightMatrix) :: netAll(state, List.tl weightMatrix);;
 
-let w = [[0.; -1.; 1.; -1.]; [-1.; 0.; -1.; 1.]; [1.; -1.; 0.; -1.]; [-1.; 1.; -1.; 0.]];;
-
 (*let test1 = netAll os1 w;;
 let () = List.iter (printf "%f ") test1;;
 print_string "\n";;
@@ -87,11 +89,23 @@ print_float test3;;
 print_string "\n";;*)
 
 let rec nextState = function (currentState, weightMatrix) ->
-  if currentState == [] && weightMatrix == []
+  if weightMatrix == [] 
   then []
   else
-    hop11Activation(List.hd currentState, (List.hd(netAll(currentState, weightMatrix)))) :: nextState(List.tl currentState, List.tl weightMatrix);;
+    hop11Activation((List.hd(netAll(currentState, weightMatrix))), List.hd currentState) :: nextState(currentState, List.tl weightMatrix);;
 
-let test1 = nextState(os1, w);;
+(*let test1 = nextState(os1, w);;
 let () = List.iter (printf "%f ") test1;;
 print_string "\n";;
+
+let test2 = nextState(os2, w);;
+let () = List.iter (printf "%f ") test2;;
+print_string "\n";;
+
+let test3 = nextState(os1, w2);;
+let () = List.iter (printf "%f ") test3;;
+print_string "\n";;
+
+let test4 = nextState(nextState(os1, w2), w2);;
+let () = List.iter (printf "%f ") test4;;
+print_string "\n";;*)
