@@ -77,7 +77,7 @@ let rec hop11Activation = function (net, oldo) ->
   else 
     if net < 0.0   (* if net activation is positive, return 1 *)
     then -1.0
-    else oldo;;  (* if net activation is zero, return original value *)
+    else oldo;;    (* if net activation is zero, return original value *)
 
 (*let test1 = hop11Activation(-3., 1.);;
 print_float test1;;
@@ -138,3 +138,34 @@ print_string "\n";;
 let test4 = updateN(oi, we, 4);;
 let () = List.iter (printf "%f ") test4;;
 print_string "\n";;*)
+
+(* Helper functions for nested recursion *)
+
+let rec multiplyScalarOriginal = function (astateOrig, valueToMultiply, indexToZeroOut, currentIndex) ->
+  if indexToZeroOut == currentIndex
+    then 0.0 :: multiplyScalarOriginal(List.tl astateOrig, valueToMultiply, indexToZeroOut, currentIndex+1) 
+  else
+    if astateOrig == []
+      then [] 
+    else
+      (List.hd(astateOrig) *. valueToMultiply) :: multiplyScalarOriginal(List.tl astateOrig, valueToMultiply, indexToZeroOut, currentIndex+1);;
+
+let rec multiplyScalarDuplicate = function (astateOrig, valueToMultiply, indexToZeroOut) ->
+  if valueToMultiply == []
+    then [] 
+  else
+    multiplyScalarOriginal(astateOrig, List.hd(valueToMultiply), indexToZeroOut, 0) :: multiplyScalarDuplicate(astateOrig, List.tl(valueToMultiply), indexToZeroOut+1);;
+
+(* Returns weight matrix for only one stored state, used as a warmup for the next function *)
+
+let rec hopTrainAstate = function (astate) ->
+  multiplyScalarDuplicate(astate, astate, 0);;
+
+(*let test1 = hopTrainAstate(os1);;
+pp_my_image(test1);;
+
+let test2 = hopTrainAstate(os2);;
+pp_my_image(test2);;
+
+let test3 = hopTrainAstate(os3);;
+pp_my_image(test3);;*)
