@@ -23,6 +23,9 @@ let os3 = [-1.0; -1.0; 1.0; 1.0];;
 let w = [[0.; -1.; 1.; -1.]; [-1.; 0.; -1.; 1.]; [1.; -1.; 0.; -1.]; [-1.; 1.; -1.; 0.]];;
 let w2 = [[0.; 1.; -1.; -1.]; [1.; 0.; -3.; 1.]; [-1.; -3.; 0.; -1.]; [-1.; 1.; -1.; 0.]];;
 
+let we = [[0.0; -1.0]; [-1.0; 0.0]];;
+let oi = [-1.0; -1.0];;
+
 (** show Eqns (4) and (5) in action *)
 
 (*# let w=hopTrain([os1]);;*)
@@ -88,6 +91,8 @@ let test3 = hop11Activation(0., 1.);;
 print_float test3;;
 print_string "\n";;*)
 
+(* Returns next state vector *)
+
 let rec nextState = function (currentState, weightMatrix) ->
   if weightMatrix == [] 
   then []
@@ -107,5 +112,29 @@ let () = List.iter (printf "%f ") test3;;
 print_string "\n";;
 
 let test4 = nextState(nextState(os1, w2), w2);;
+let () = List.iter (printf "%f ") test4;;
+print_string "\n";;*)
+
+(* Returns network state after n time steps *)
+
+let rec updateN = function (currentState, weightMatrix, n) ->
+  if n == 1
+  then nextState(currentState, weightMatrix)
+  else
+    updateN(nextState(currentState, weightMatrix), weightMatrix, n-1);;
+
+(*let test1 = updateN(oi, we, 1);;
+let () = List.iter (printf "%f ") test1;;
+print_string "\n";;
+
+let test2 = updateN(oi, we, 2);;
+let () = List.iter (printf "%f ") test2;;
+print_string "\n";;
+
+let test3 = updateN(oi, we, 3);;
+let () = List.iter (printf "%f ") test3;;
+print_string "\n";;
+
+let test4 = updateN(oi, we, 4);;
 let () = List.iter (printf "%f ") test4;;
 print_string "\n";;*)
