@@ -169,3 +169,32 @@ pp_my_image(test2);;
 
 let test3 = hopTrainAstate(os3);;
 pp_my_image(test3);;*)
+
+(* This returns weight matrix, given a list of stored states
+(shown previously) using Eqns (4) and (5) *)
+
+let rec addVecs = function (vecA, vecB) ->
+  if vecA == [] || vecB == []
+  then []
+  else
+    List.hd(vecA) +. List.hd(vecB) :: addVecs(List.tl(vecA), List.tl(vecB));;
+
+let rec addListsOfVectors = function (listA, listB) ->
+  if listA == [] || listB == []
+  then []
+  else
+    addVecs(List.hd(listA), List.hd(listB)) :: addListsOfVectors(List.tl(listA), List.tl(listB));;
+
+let rec hopTrain = function (allStates) ->
+  if List.tl(allStates) == []
+  then hopTrainAstate(List.hd(allStates))
+  else
+    addListsOfVectors(hopTrainAstate(List.hd allStates), hopTrain(List.tl allStates));;
+
+let test1 = hopTrain([os1]);;
+pp_my_image(test1);;
+print_string "\n";;
+
+let test2 = hopTrain([os1; os2; os3]);;
+pp_my_image(test2);;
+print_string "\n";;
